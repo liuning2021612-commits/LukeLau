@@ -7,8 +7,9 @@
 
 | 文件 | 说明 |
 |---|---|
-| `output/site_plan.dwg` | AutoCAD DWG（R2000 / AC1015，高版本 AutoCAD 均可打开） |
-| `output/site_plan.dxf` | 同一图形的 DXF 版本（备用） |
+| `output/site_plan.dwg` | **AutoCAD 2018 格式 DWG（AC1032）**，即 AutoCAD 2018–2025 使用的原生格式，推荐用 AutoCAD 2025 打开 |
+| `output/site_plan.dxf` | 同一图形的 DXF 版本（备用，AutoCAD 2025 可直接打开） |
+| `output/site_plan_R2000.dwg` | 旧版 R2000 DWG（LibreDWG 生成，仅作兼容备用） |
 | `output/preview.png`   | DWG 回读后渲染的预览图 |
 
 - 单位：**毫米**（INSUNITS = 4），1 个图形单位 = 1 mm，原点位于图片左下角。
@@ -28,7 +29,11 @@
 pip install opencv-python-headless ezdxf scikit-image pillow numpy
 python3 tools/image_to_cad.py input/site_plan.webp output/site_plan.dxf \
     --red-length-m 19.5 --geom site.geom
-# DWG writer: needs LibreDWG 0.13 (built from source)
+# AutoCAD 2018-2025 DWG (needs .NET 8 SDK; uses ACadSharp from NuGet)
+dotnet run -c Release --project tools/GeomToDwg -- site.geom output/site_plan.dwg
+dotnet run -c Release --project tools/GeomToDwg -- --check output/site_plan.dwg
+
+# Optional R2000 DWG via LibreDWG 0.13 (built from source)
 cc -O2 tools/geom2dwg.c -I<libredwg>/include -L<libredwg>/build -lredwg -lm -o geom2dwg
-./geom2dwg site.geom output/site_plan.dwg
+./geom2dwg site.geom output/site_plan_R2000.dwg
 ```
